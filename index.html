@@ -1,0 +1,99 @@
+
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>Emergency Call | Dnieper Fire & Safety</title>
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      max-width: 480px;
+      margin: 40px auto;
+      padding: 24px;
+      line-height: 1.5;
+      color: #222;
+    }
+    button {
+      width: 100%;
+      padding: 15px;
+      border: 0;
+      border-radius: 8px;
+      background: #b42318;
+      color: white;
+      font-size: 17px;
+      cursor: pointer;
+    }
+    #status { margin-top: 18px; }
+  </style>
+</head>
+<body>
+  <h2>Dnieper Fire &amp; Safety</h2>
+  <h3>Emergency Call Registration</h3>
+  <p>
+    Tap below to share your current location and continue
+    to the emergency call form. Your browser will ask for
+    permission to access your location.
+  </p>
+
+  <button id="locate">Share Location &amp; Continue</button>
+  <p id="status" role="status"></p>
+
+  <script>
+    const FORM_URL =
+      "https://docs.google.com/forms/d/e/" +
+      "1FAIpQLSeKctuV01HJ6gzooY1RFdlhcDIQkUp6yGxQNs7SziTrhjeKQg/viewform";
+
+    const LOCATION_FIELD = "entry.74352180";
+
+    const button = document.getElementById("locate");
+    const status = document.getElementById("status");
+
+    button.addEventListener("click", function () {
+      if (!navigator.geolocation) {
+        status.textContent =
+          "Location is not supported by this browser. Please open the form directly.";
+        return;
+      }
+
+      button.disabled = true;
+      status.textContent = "Getting your location. Please wait...";
+
+      navigator.geolocation.getCurrentPosition(
+        function (position) {
+          const lat = position.coords.latitude;
+          const lon = position.coords.longitude;
+
+          const mapsLink =
+            "https://www.google.com/maps?q=" + lat + "," + lon;
+
+          const form = new URL(FORM_URL);
+          form.searchParams.set("usp", "pp_url");
+          form.searchParams.set(LOCATION_FIELD, mapsLink);
+
+          status.textContent = "Location captured. Opening the form...";
+          window.location.assign(form.toString());
+        },
+        function (error) {
+          button.disabled = false;
+
+          const messages = {
+            1: "Location permission was denied. Allow location access in your browser settings and try again.",
+            2: "Your location could not be determined. Check your device location settings and try again.",
+            3: "Location request timed out. Please try again."
+          };
+
+          status.textContent =
+            messages[error.code] ||
+            "Unable to get your location. Please try again.";
+        },
+        {
+          enableHighAccuracy: true,
+          timeout: 20000,
+          maximumAge: 0
+        }
+      );
+    });
+  </script>
+</body>
+</html>
