@@ -1,43 +1,190 @@
-
 <!DOCTYPE html>
 <html lang="en">
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="theme-color" content="#c82027">
   <title>Emergency Call | Dnieper Fire & Safety</title>
+
   <style>
+    * { box-sizing: border-box; }
+
     body {
+      margin: 0;
+      min-height: 100vh;
+      padding: 24px 16px;
+      display: flex;
+      justify-content: center;
+      align-items: center;
       font-family: Arial, sans-serif;
-      max-width: 480px;
-      margin: 40px auto;
-      padding: 24px;
-      line-height: 1.5;
-      color: #222;
+      color: #172b4d;
+      background: linear-gradient(145deg, #f5f9ff, #ffffff 55%, #fff1f1);
     }
+
+    .container {
+      width: 100%;
+      max-width: 460px;
+      background: #ffffff;
+      border: 1px solid #e8edf5;
+      border-radius: 24px;
+      padding: 28px 22px;
+      text-align: center;
+      box-shadow: 0 12px 40px rgba(30, 55, 90, 0.10);
+    }
+
+    .brand {
+      color: #c82027;
+      font-size: 25px;
+      font-weight: 800;
+      line-height: 1.25;
+      margin-bottom: 5px;
+    }
+
+    .brand small {
+      display: block;
+      color: #536783;
+      font-size: 13px;
+      font-weight: 500;
+      margin-top: 5px;
+    }
+
+    .alert {
+      display: inline-block;
+      margin: 24px 0 16px;
+      padding: 9px 15px;
+      background: #fff0f0;
+      color: #b91c24;
+      border-radius: 30px;
+      font-size: 12px;
+      font-weight: bold;
+      letter-spacing: 1px;
+    }
+
+    .pin {
+      width: 100px;
+      height: 100px;
+      display: grid;
+      place-items: center;
+      margin: 10px auto 20px;
+      border-radius: 50%;
+      background: #fff1f1;
+      font-size: 57px;
+    }
+
+    h1 {
+      font-size: 27px;
+      line-height: 1.25;
+      margin: 0 0 14px;
+      color: #142746;
+    }
+
+    .description {
+      color: #596b83;
+      font-size: 15px;
+      line-height: 1.7;
+      margin: 0 0 24px;
+    }
+
     button {
       width: 100%;
-      padding: 15px;
-      border: 0;
-      border-radius: 8px;
-      background: #b42318;
+      min-height: 56px;
+      border: none;
+      border-radius: 13px;
+      background: #c82027;
       color: white;
-      font-size: 17px;
+      padding: 15px;
+      font-size: 16px;
+      font-weight: bold;
       cursor: pointer;
+      box-shadow: 0 6px 14px rgba(200, 32, 39, 0.20);
     }
-    #status { margin-top: 18px; }
+
+    button:disabled {
+      opacity: 0.65;
+      cursor: wait;
+    }
+
+    #status {
+      font-size: 14px;
+      line-height: 1.6;
+      margin: 16px 0 0;
+      color: #465b77;
+      overflow-wrap: anywhere;
+    }
+
+    .privacy {
+      font-size: 12px;
+      line-height: 1.6;
+      color: #718198;
+      margin: 18px 0 0;
+    }
+
+    .benefits {
+      display: flex;
+      gap: 8px;
+      margin-top: 25px;
+      padding-top: 20px;
+      border-top: 1px solid #e8edf5;
+    }
+
+    .benefit {
+      flex: 1;
+      color: #536783;
+      font-size: 11px;
+      line-height: 1.5;
+    }
+
+    footer {
+      color: #8a97aa;
+      font-size: 11px;
+      margin-top: 24px;
+    }
   </style>
 </head>
-<body>
-  <h2>Dnieper Fire &amp; Safety</h2>
-  <h3>Emergency Call Registration</h3>
-  <p>
-    Tap below to share your current location and continue
-    to the emergency call form. Your browser will ask for
-    permission to access your location.
-  </p>
 
-  <button id="locate">Share Location &amp; Continue</button>
-  <p id="status" role="status"></p>
+<body>
+  <main class="container">
+    <div class="brand">
+      Dnieper
+      <small>FIRE &amp; SAFETY</small>
+    </div>
+
+    <div class="alert">EMERGENCY CALL REGISTRATION</div>
+
+    <div class="pin" aria-hidden="true">📍</div>
+
+    <h1>Please Allow Location Access</h1>
+
+    <p class="description">
+      Kindly grant permission to access your current location.
+      This will help our emergency response team identify your
+      exact position and reach you faster and more safely.
+    </p>
+
+    <button id="locate" type="button">
+      📍 Allow Location Access
+    </button>
+
+    <p id="status" role="status" aria-live="polite">
+      Tap the button above to share your current location.
+    </p>
+
+    <p class="privacy">
+      Your location will be added to your emergency call form
+      to assist our response team.
+    </p>
+
+    <div class="benefits">
+      <div class="benefit">🛡️<br>Safety First</div>
+      <div class="benefit">📍<br>Accurate Location</div>
+      <div class="benefit">🚒<br>Faster Response</div>
+    </div>
+
+    <footer>
+      Dnieper Fire &amp; Safety<br>
+      Your safety matters to us.
+    </footer>
+  </main>
 
   <script>
     const FORM_URL =
@@ -52,12 +199,14 @@
     button.addEventListener("click", function () {
       if (!navigator.geolocation) {
         status.textContent =
-          "Location is not supported by this browser. Please open the form directly.";
+          "Your browser does not support location access. Please try another browser.";
         return;
       }
 
       button.disabled = true;
-      status.textContent = "Getting your location. Please wait...";
+      button.textContent = "Getting Your Location...";
+      status.textContent =
+        "Please allow location permission when your browser asks.";
 
       navigator.geolocation.getCurrentPosition(
         function (position) {
@@ -71,22 +220,27 @@
           form.searchParams.set("usp", "pp_url");
           form.searchParams.set(LOCATION_FIELD, mapsLink);
 
-          status.textContent = "Location captured. Opening the form...";
+          status.textContent =
+            "Location captured successfully. Opening the emergency form...";
+
           window.location.assign(form.toString());
         },
+
         function (error) {
           button.disabled = false;
+          button.textContent = "📍 Allow Location Access";
 
           const messages = {
-            1: "Location permission was denied. Allow location access in your browser settings and try again.",
-            2: "Your location could not be determined. Check your device location settings and try again.",
-            3: "Location request timed out. Please try again."
+            1: "Location permission was denied. Please allow location access in your browser settings and try again.",
+            2: "We could not determine your location. Check your phone's location settings and try again.",
+            3: "The location request timed out. Please try again."
           };
 
           status.textContent =
             messages[error.code] ||
-            "Unable to get your location. Please try again.";
+            "Unable to retrieve your location. Please try again.";
         },
+
         {
           enableHighAccuracy: true,
           timeout: 20000,
